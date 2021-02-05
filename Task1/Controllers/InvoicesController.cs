@@ -9,7 +9,7 @@ using Task1.Models;
 
 namespace Task1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Invoices")]
     [ApiController]
     public class InvoicesController : ControllerBase
     {
