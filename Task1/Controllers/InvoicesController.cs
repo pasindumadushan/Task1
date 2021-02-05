@@ -14,10 +14,26 @@ namespace Task1.Controllers
     public class InvoicesController : Controller
     {
         private readonly SalesOrderContext _context;
+        Invoice objInvoice;
 
         public InvoicesController(SalesOrderContext context)
         {
             _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceId()
+        {
+            objInvoice = new Invoice();
+            objInvoice.InvoiceDate = DateTime.Now;
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(objInvoice);
+                await _context.SaveChangesAsync();
+            }
+
+            return Json(new { data = objInvoice });
         }
 
         [HttpPost]

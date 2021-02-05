@@ -37,8 +37,8 @@
                             <form id="Sales_Order_Form" novalidate>
                                 <div class="form-group row">
                                     <div class="col-sm-6">
-                                        <input class="form-control form-control-user" id="CustomerName" name="CustomerName" placeholder="Customer Name" data-error="#errCustomerName">
-                                        <span class="text-danger" id="errCustomerName"></span>
+                                        <select id="Customers" name="Customers">
+                                        </select>
                                     </div>
 
                                     <div class="col-sm-6">
@@ -101,7 +101,7 @@
                                     </div>
 
                                 </div>
-
+                                <div class="mypanel"></div>
                                 <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
 
                             </form>
@@ -121,187 +121,259 @@
 <script src="~/Bootstrap Design/js/sb-admin-2.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            $(function () {
+        getCustomerData();
+        getInvoiceData();
+        $(function () {
 
-                jQuery.validator.addMethod("noSpace", function (value, element) {
-                    return value.indexOf(" ") < 0 && value != "";
-                }, "No space please and don't leave it empty");
+            jQuery.validator.addMethod("noSpace", function (value, element) {
+                return value.indexOf(" ") < 0 && value != "";
+            }, "No space please and don't leave it empty");
 
-                jQuery.validator.addMethod("exactlength", function (value, element, param) {
-                    return this.optional(element) || value.length == param;
-                }, $.validator.format("Please enter exactly {0} characters."));
+            jQuery.validator.addMethod("exactlength", function (value, element, param) {
+                return this.optional(element) || value.length == param;
+            }, $.validator.format("Please enter exactly {0} characters."));
 
-                $("#Sales_Order_Form").validate({
-                    errorPlacement: function (error, element) {
-                        var placement = $(element).data('error');
-                        if (placement) {
-                            $(placement).append(error)
-                        } else {
-                            error.insertAfter(element);
-                        }
+            $("#Sales_Order_Form").validate({
+                errorPlacement: function (error, element) {
+                    var placement = $(element).data('error');
+                    if (placement) {
+                        $(placement).append(error)
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    CustomerName: {
+                        required: true,
+                        noSpace: true,
+                        maxlength: 50
                     },
-                    rules: {
-                        CustomerName: {
-                            required: true,
-                            noSpace: true,
-                            maxlength: 50
-                        },
-                        InvoiceNo: {
-                            required: true,
-                            noSpace: true,
-                            maxlength: 10
-                        },
-                        Address1: {
-                            required: true,
-                            maxlength: 200
-                        },
-                        Address2: {
-                            maxlength: 200
-                        },
-                        Address3: {
-                            maxlength: 200
-                        },
-                        InvoiceDate: {
-                            required: true,
-                        },
-                        ReferenceNo: {
-                            required: true,
-                            maxlength: 10
-                        },
-                        State: {
-                            required: true,
-                            noSpace: true,
-                            maxlength: 50
-                        },
-                        PostCode: {
-                            required: true,
-                            noSpace: true,
-                            number: true,
-                            maxlength: 10
-                        },
-                        Note: {
-                            maxlength: 50
-                        }
-
+                    InvoiceNo: {
+                        required: true,
+                        noSpace: true,
+                        maxlength: 10
                     },
-
-                    messages: {
-                        CustomerName: {
-                            required: "Please provide this field !",
-                            noSpace: "Please dont use spaces !",
-                            maxlength: "Maximum length execced !"
-                        },
-                        InvoiceNo: {
-                            required: "Please provide this field !",
-                            noSpace: "Please dont use spaces !",
-                            maxlength: "Maximum length execced !"
-                        },
-                        Address1: {
-                            required: "Please provide this field !",
-                            maxlength: "Maximum length execced !"
-                        },
-                        Address2: {
-                            maxlength: "Maximum length execced !"
-                        },
-                        Address3: {
-                            maxlength: "Maximum length execced !"
-                        },
-                        InvoiceDate: {
-                            required: "Please provide this field !",
-                        },
-                        ReferenceNo: {
-                            required: "Please provide this field !",
-                            maxlength: "Maximum length execced !"
-                        },
-                        State: {
-                            required: "Please provide this field !",
-                            noSpace: "Please dont use spaces !",
-                            maxlength: "Maximum length execced !"
-                        },
-                        PostCode: {
-                            required: "Please provide this field !",
-                            noSpace: "Please dont use spaces !",
-                            number: "Use only numbers",
-                            maxlength: "Maximum length execced !"
-                        },
-                        Note: {
-                            maxlength: "Maximum length execced !"
-                        }
+                    Address1: {
+                        required: true,
+                        maxlength: 200
                     },
-
-                    submitHandler: function (form) {
-                        getData();
+                    Address2: {
+                        maxlength: 200
+                    },
+                    Address3: {
+                        maxlength: 200
+                    },
+                    InvoiceDate: {
+                        required: true,
+                    },
+                    ReferenceNo: {
+                        required: true,
+                        maxlength: 10
+                    },
+                    State: {
+                        required: true,
+                        noSpace: true,
+                        maxlength: 50
+                    },
+                    PostCode: {
+                        required: true,
+                        noSpace: true,
+                        number: true,
+                        maxlength: 10
+                    },
+                    Note: {
+                        maxlength: 50
                     }
 
-                });
-            });
+                },
 
+                messages: {
+                    CustomerName: {
+                        required: "Please provide this field !",
+                        noSpace: "Please dont use spaces !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    InvoiceNo: {
+                        required: "Please provide this field !",
+                        noSpace: "Please dont use spaces !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    Address1: {
+                        required: "Please provide this field !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    Address2: {
+                        maxlength: "Maximum length execced !"
+                    },
+                    Address3: {
+                        maxlength: "Maximum length execced !"
+                    },
+                    InvoiceDate: {
+                        required: "Please provide this field !",
+                    },
+                    ReferenceNo: {
+                        required: "Please provide this field !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    State: {
+                        required: "Please provide this field !",
+                        noSpace: "Please dont use spaces !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    PostCode: {
+                        required: "Please provide this field !",
+                        noSpace: "Please dont use spaces !",
+                        number: "Use only numbers",
+                        maxlength: "Maximum length execced !"
+                    },
+                    Note: {
+                        maxlength: "Maximum length execced !"
+                    }
+                },
+
+                submitHandler: function (form) {
+                    postData();
+                }
+
+            });
         });
 
+    });
 
-        @*function CheckEmail() {
+    $("#Customers").change(function () {
+        AutoFillCustomerData(this.value);
+        alert(this.value);
+    });
+        
 
-            $("#errInputEmail").html('<label id="InputEmail-error" class="error" for="InputEmail">Checking....</label>')
-            var email = $("#InputEmail").val();
-            var returnValue = false;
+    function postData() {
+        $('#Sales_Order_Form').submit(function (e) {
+
+            var formData = new FormData();
+            formData.append('CustomerName', $('#CustomerName').val());
+            formData.append('InvoiceNo', $('#InvoiceNo').val());
+            formData.append('Address1', $('#Address1').val());
+            formData.append('Address2', $('#Address2').val());
+            formData.append('Address3', $('#Address3').val());
+            formData.append('InvoiceDate', $('#InvoiceDate').val());
+            formData.append('ReferenceNo', $('#ReferenceNo').val());
+            formData.append('Note', $('#Note').val());
+            formData.append('State', $('#State').val());
+            formData.append('PostCode', $('#PostCode').val());
 
             $.ajax({
-                type: "GET",
-                url: '@Url.Action("CheckEmail", "SignUp")',
-                data: { email: email },
-                async: false,
+                type: "POST",
+                data: formData,
+                url: '@Url.Action("PostInvoice", "Invoices")',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                //cache: false,
                 success: function (data) {
-                    returnValue = data.exist === true ? false : true
-                    if (returnValue == true) {
-                        $("#errInputEmail").html('<label id="InputEmail-error" class="error" style="color: green;" for="InputEmail">Email can be used.</label>')
+
+                },
+
+                failure: function (data) {
+                    console.log("failure");
+                },
+                error: function (data) {
+                    console.log("error");
+                }
+                 
+            });
+        });
+    }
+
+    function getCustomerData() {
+
+    $.ajax({
+            type: "GET",
+            url: "/api/Customers",
+            dataType: "json",
+            success: function (data) {
+                var userData = data;
+                var newData = userData.data;
+
+                $('#Customers').empty();
+                $('#Customers').append('<option selected="true" disabled>Choose customer name...</option>');
+                $('#Customers').prop('selectedIndex', 0);
+
+                for (i = 0; i < newData.length; i++) {
+                    $('#Customers').append($('<option></option>').attr('value', newData[i].customerName).text(newData[i].customerName))
+                }
+            },
+
+            failure: function (data) {
+                console.log("failure");
+            },
+
+            error: function (data) {
+                console.log("error");
+            }
+
+        });
+    }
+
+    function AutoFillCustomerData(customerName) {
+
+        $.ajax({
+            type: "GET",
+            url: "/api/Customers",
+            dataType: "json",
+            success: function (data) {
+                var userData = data;
+                var newData = userData.data;
+
+                for (i = 0; i < newData.length; i++) {
+                    if (newData[i].customerName == customerName) {
+                        $("#Address1").val(newData[i].address1);
+                        $("#Address2").val(newData[i].address2);
+                        $("#Address3").val(newData[i].address3);
+                        $("#State").val(newData[i].state);
+                        $("#PostCode").val(newData[i].postalCode);
                     }
                 }
-            });
-            return returnValue;
-        }*@
+            },
 
-        function getData() {
-            $('#Sales_Order_Form').submit(function (e) {
+            failure: function (data) {
+                console.log("failure");
+            },
+            error: function (data) {
+                console.log("error");
+            }
 
-                var formData = new FormData();
-                formData.append('CustomerName', $('#CustomerName').val());
-                formData.append('InvoiceNo', $('#InvoiceNo').val());
-                formData.append('Address1', $('#Address1').val());
-                formData.append('Address2', $('#Address2').val());
-                formData.append('Address3', $('#Address3').val());
-                formData.append('InvoiceDate', $('#InvoiceDate').val());
-                formData.append('ReferenceNo', $('#ReferenceNo').val());
-                formData.append('Note', $('#Note').val());
-                formData.append('State', $('#State').val());
-                formData.append('PostCode', $('#PostCode').val());
+        });
+    }
 
+    function getInvoiceData() {
 
-                $.ajax({
-                    type: "POST",
-                    data: formData,
-                    url: '@Url.Action("PostInvoice", "Invoices")',
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-                    processData: false, // NEEDED, DON'T OMIT THIS
-                    //cache: false,
-                    success: function (data) {
+        $.ajax({
+            type: "GET",
+            url: "/api/Invoices",
+            dataType: "json",
+            success: function (data) {
+                var invoiceData = data;
+                var newData = invoiceData.data;
 
-                    },
+                alert(newData.invoiceDate);
+                alert(newData.invoiceNo);
 
-                    failure: function (data) {
-                        console.log("failure");
-                    },
-                    error: function (data) {
-                        console.log("error");
-                    }
+                $("#InvoiceDate").val(newData.invoiceDate);
+                $("#InvoiceNo").val(newData.invoiceNo);
+                console.log(data);
+            },
 
-                });
-            });
-        }
+            failure: function (data) {
+                console.log("failure");
+            },
 
+            error: function (data) {
+                console.log("error");
+            }
+
+        });
+    }
 </script>
