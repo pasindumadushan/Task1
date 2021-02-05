@@ -102,7 +102,7 @@
 
                                 </div>
 
-                                <input type="submit" value="Register Account" class="btn btn-primary btn-user btn-block" />
+                                <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
 
                             </form>
 
@@ -113,21 +113,14 @@
         </div>
 
     </div>
-
 </body>
-<!-- Page level plugins -->
-<script src="~/Bootstrap Design/vendor/chart.js/Chart.min.js"></script>
-<script src="~/Bootstrap Design/js/demo/chart-area-demo.js"></script>
-<script src="~/Bootstrap Design/js/demo/chart-pie-demo.js"></script>
+
 <script src="~/Bootstrap Design/vendor/jquery/jquery.min.js"></script>
 <script src="~/Bootstrap Design/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="~/Bootstrap Design/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="~/Bootstrap Design/js/sb-admin-2.min.js"></script>
-
-@section Scripts
-{
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script>
         $(document).ready(function () {
 
             $(function () {
@@ -138,10 +131,6 @@
 
                 jQuery.validator.addMethod("exactlength", function (value, element, param) {
                     return this.optional(element) || value.length == param;
-                }, $.validator.format("Please enter exactly {0} characters."));
-
-                jQuery.validator.addMethod("emailExist", function (value, element, param) {
-                    return CheckEmail();
                 }, $.validator.format("Please enter exactly {0} characters."));
 
                 $("#Sales_Order_Form").validate({
@@ -195,7 +184,7 @@
                         Note: {
                             maxlength: 50
                         }
-                        
+
                     },
 
                     messages: {
@@ -252,7 +241,7 @@
         });
 
 
-        function CheckEmail() {
+        @*function CheckEmail() {
 
             $("#errInputEmail").html('<label id="InputEmail-error" class="error" for="InputEmail">Checking....</label>')
             var email = $("#InputEmail").val();
@@ -273,24 +262,33 @@
                 }
             });
             return returnValue;
-        }
+        }*@
 
         function getData() {
+            $('#Sales_Order_Form').submit(function (e) {
 
-            $('#RegistrationForm').submit(function (e) {
-                var myFrom = {
-                    FirstName: $('#FirstName').val(),
-                    LastName: $('#LastName').val(),
-                    Email: $('#InputEmail').val(),
-                    Password: $('#InputPassword').val()
-                };
+                var formData = new FormData();
+                formData.append('CustomerName', $('#CustomerName').val());
+                formData.append('InvoiceNo', $('#InvoiceNo').val());
+                formData.append('Address1', $('#Address1').val());
+                formData.append('Address2', $('#Address2').val());
+                formData.append('Address3', $('#Address3').val());
+                formData.append('InvoiceDate', $('#InvoiceDate').val());
+                formData.append('ReferenceNo', $('#ReferenceNo').val());
+                formData.append('Note', $('#Note').val());
+                formData.append('State', $('#State').val());
+                formData.append('PostCode', $('#PostCode').val());
+
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("SaveUser", "SignUp")',
-                    data: myFrom,
+                    data: formData,
+                    url: '@Url.Action("PostInvoice", "Invoices")',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
+                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                    processData: false, // NEEDED, DON'T OMIT THIS
+                    //cache: false,
                     success: function (data) {
 
                     },
@@ -306,6 +304,4 @@
             });
         }
 
-    </script>
-
-}
+</script>
