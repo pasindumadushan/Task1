@@ -89,6 +89,13 @@
 
                                         <div class="form-group row">
                                             <div class="col-sm-12">
+                                                <input class="form-control form-control-user" id="Suburb" name="Suburb" placeholder="Suburb" data-error="#errSuburb">
+                                                <span class="text-danger" id="errSuburb"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
                                                 <input class="form-control form-control-user" id="PostCode" name="PostCode" placeholder="Post Code" data-error="#errPostCode">
                                                 <span class="text-danger" id="errPostCode"></span>
                                             </div>
@@ -145,7 +152,7 @@
                     }
                 },
                 rules: {
-                    CustomerName: {
+                    Customers: {
                         required: true,
                         noSpace: true,
                         maxlength: 50
@@ -175,6 +182,10 @@
                     State: {
                         required: true,
                         noSpace: true,
+                        maxlength: 50
+                    },
+                    Suburb: {
+                        required: true,
                         maxlength: 50
                     },
                     PostCode: {
@@ -190,7 +201,7 @@
                 },
 
                 messages: {
-                    CustomerName: {
+                    Customers: {
                         required: "Please provide this field !",
                         noSpace: "Please dont use spaces !",
                         maxlength: "Maximum length execced !"
@@ -220,6 +231,10 @@
                     State: {
                         required: "Please provide this field !",
                         noSpace: "Please dont use spaces !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    Suburb: {
+                        required: "Please provide this field !",
                         maxlength: "Maximum length execced !"
                     },
                     PostCode: {
@@ -252,7 +267,7 @@
         $('#Sales_Order_Form').submit(function (e) {
 
             var formData = new FormData();
-            formData.append('CustomerName', $('#CustomerName').val());
+            formData.append('Customers', $('#Customers').val());
             formData.append('InvoiceNo', $('#InvoiceNo').val());
             formData.append('Address1', $('#Address1').val());
             formData.append('Address2', $('#Address2').val());
@@ -260,6 +275,7 @@
             formData.append('InvoiceDate', $('#InvoiceDate').val());
             formData.append('ReferenceNo', $('#ReferenceNo').val());
             formData.append('Note', $('#Note').val());
+            formData.append('Suburb', $('#Suburb').val());
             formData.append('State', $('#State').val());
             formData.append('PostCode', $('#PostCode').val());
 
@@ -333,6 +349,7 @@
                         $("#Address2").val(newData[i].address2);
                         $("#Address3").val(newData[i].address3);
                         $("#State").val(newData[i].state);
+                        $("#Suburb").val(newData[i].suburb);
                         $("#PostCode").val(newData[i].postalCode);
                     }
                 }
@@ -357,9 +374,6 @@
             success: function (data) {
                 var invoiceData = data;
                 var newData = invoiceData.data;
-
-                alert(newData.invoiceDate);
-                alert(newData.invoiceNo);
 
                 $("#InvoiceDate").val(newData.invoiceDate);
                 $("#InvoiceNo").val(newData.invoiceNo);

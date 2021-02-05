@@ -15,6 +15,7 @@ namespace Task1.Controllers
     {
         private readonly SalesOrderContext _context;
         Invoice objInvoice;
+        Customer objCustomer;
 
         public InvoicesController(SalesOrderContext context)
         {
@@ -37,10 +38,46 @@ namespace Task1.Controllers
         }
 
         [HttpPost]
-        public ActionResult PostInvoice()
+        public async Task<IActionResult> PostInvoice()
         {
-            System.Diagnostics.Debug.WriteLine("here" + Request.Form["CustomerName"]);
+            objInvoice = new Invoice();
+            objCustomer = new Customer();
 
+            objCustomer.CustomerName = Request.Form["Customers"];
+            objCustomer.Address1 = Request.Form["Address1"];
+            objCustomer.Address2 = Request.Form["Address2"];
+            objCustomer.Address3 = Request.Form["Address3"];
+            objCustomer.Suburb = Request.Form["Suburb"];
+            objCustomer.State = Request.Form["State"];
+            objCustomer.PostalCode = Request.Form["PostCode"];
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerName == objCustomer.CustomerName);
+
+            objInvoice.CustomerRefId = customer.CustomerId;
+            objInvoice.InvoiceNo = Int32.Parse(Request.Form["InvoiceNo"]);
+            objInvoice.InvoiceDate = DateTime.Parse(Request.Form["InvoiceDate"]);
+            objInvoice.ReferenceNo = Int32.Parse(Request.Form["ReferenceNo"]);
+            objInvoice.Note = Request.Form["Note"];
+
+            if (objInvoice.InvoiceNo == 0)
+            {
+                return NotFound();
+            }
+
+            _context.Update(objInvoice);
+            await _context.SaveChangesAsync();
+
+            
+            System.Diagnostics.Debug.WriteLine(objCustomer.CustomerName);
+            System.Diagnostics.Debug.WriteLine(objCustomer.Address1);
+            System.Diagnostics.Debug.WriteLine(objCustomer.Address2);
+            System.Diagnostics.Debug.WriteLine(objCustomer.Address3);
+            System.Diagnostics.Debug.WriteLine(objCustomer.Suburb);
+            System.Diagnostics.Debug.WriteLine(objCustomer.State);
+            System.Diagnostics.Debug.WriteLine(objCustomer.PostalCode);
+            System.Diagnostics.Debug.WriteLine(objInvoice.InvoiceNo);
+            System.Diagnostics.Debug.WriteLine(objInvoice.InvoiceDate);
+            System.Diagnostics.Debug.WriteLine(objInvoice.ReferenceNo);
 
             return Json("test");
         }
