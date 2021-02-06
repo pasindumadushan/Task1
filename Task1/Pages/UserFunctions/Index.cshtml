@@ -35,12 +35,15 @@
                                 <h1 class="h4 text-gray-900 mb-4">Sales Order!</h1>
                             </div>
                             <form id="Sales_Order_Form" novalidate>
+                                
+                                <div class="form-group row">
+                                    <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
+                                </div>
+                                
                                 <div class="form-group row">
 
-                                    <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
-
                                     <div class="col-sm-6">
-                                        <select id="Customers" name="Customers">
+                                        <select class="form-control form-control-user" id="Customers" name="Customers">
                                         </select>
                                     </div>
 
@@ -115,21 +118,44 @@
                             </form>
 
                             <form id="Items_Form" novalidate>
-                                <select id="ItemCode" name="ItemCode">
-                                </select>
-                                <input type="text" name="Description" id="Description" placeholder="Description">
-                                <input type="text" name="Note2" id="Note2" placeholder="Note">
-                                <input type="text" name="Quantity" id="Quantity" placeholder="Quantity">
-                                <input type="text" name="Price" id="Price" placeholder="Price">
-                                <input type="text" name="Tax" id="Tax" placeholder="Tax">
-                                <input type="text" name="ExclAmount" id="ExclAmount" placeholder="ExclAmount">
-                                <input type="text" name="TaxAmount" id="TaxAmount" placeholder="TaxAmount">
-                                <input type="text" name="InclAmount" id="InclAmount" placeholder="InclAmount">
-
-                                <input type="submit" class="add-row" value="Add Row">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <select id="ItemCode" name="ItemCode">
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="Description" id="Description" placeholder="Description">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="Note2" id="Note2" placeholder="Note">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="Quantity" id="Quantity" placeholder="Quantity">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="Price" id="Price" placeholder="Price">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="Tax" id="Tax" placeholder="Tax">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="hidden" name="ExclAmount" id="ExclAmount" placeholder="ExclAmount">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="hidden" name="TaxAmount" id="TaxAmount" placeholder="TaxAmount">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="hidden" name="InclAmount" id="InclAmount" placeholder="InclAmount">
+                                    </div>
+                                </div>
+                               
+                                <input type="submit" class="btn btn-success" value="Add Row">
                             </form>
 
-                            <table>
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Select</th>
@@ -146,8 +172,21 @@
                                 </thead>
                                 <tbody>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td><td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Total:<label id="TotalExcl"></label></td>
+                                        <td>Total:<label id="TotalTax"></label></td>
+                                        <td>Total:<label id="TotalIncl"></label></td>
+                                    </tr>
+                                </tfoot>
                             </table>
-                            <button type="button" class="delete-row">Delete Row</button>
+                            <button type="button" class="btn btn-danger">Delete Row</button>
 
                         </div>
                     </div>
@@ -171,7 +210,6 @@
         getCustomerData();
         getInvoiceData();
         getItemDate();
-        calculateAmounts();
 
     });
 
@@ -183,17 +221,7 @@
         AutoFillItemData(this.value);
     });
 
-    $("#Quantity").change(function () {
-        ExclAmount();
-    });
-
-    //$("#Tax").change(function () {
-    //    TaxAmount();
-    //});
-
-    //$("#TaxAmount").change(function () {
-    //    InclAmount();
-    //});
+    
 
     function validateInvoiceData() {
         $(function () {
@@ -424,7 +452,7 @@
                 },
 
                 submitHandler: function (form) {
-                    dynamicRowAddition();
+                    calculateAmounts();
                 }
 
             });
@@ -602,8 +630,7 @@
                 for (i = 0; i < newData.length; i++) {
                     if (newData[i].itemCode == ItemCode) {
                         $("#Description").val(newData[i].description);
-                        $("#Price").val(newData[i].price
-                        );
+                        $("#Price").val(newData[i].price);
                     }
                 }
             },
@@ -632,16 +659,24 @@
             var InclAmount = $("#InclAmount").val();
             var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + ItemCode + "</td><td>" + Description + "</td><td>" + Note2 + "</td><td>" + Quantity + "</td><td>" + Price + "</td><td>" + Tax + "</td><td>" + ExclAmount + "</td><td>" + TaxAmount + "</td><td>" + InclAmount + "</td></tr>";
             $("table tbody").append(markup);
+
+            calculateTotal();
         });
 
         // Find and remove selected table rows
-        $(".delete-row").click(function () {
+        $(".btn-danger").click(function () {
             $("table tbody").find('input[name="record"]').each(function () {
                 if ($(this).is(":checked")) {
                     $(this).parents("tr").remove();
                 }
             });
+
+            calculateTotal();
+
         });
+
+        
+
     }
 
     function submitTableData() {
@@ -669,14 +704,18 @@
         console.log(table);
     }
 
-    function ExclAmount() {
+    function calculateAmounts(){
         $.ajax({
             type: "GET",
-            url: "/api/Items/GetExclAmount",
-            data: { price: $("#Quantity").val(), quantity: $("#Price").val()},
+            url: "/api/Items/GetAmount",
+            data: { price: $("#Quantity").val(), quantity: $("#Price").val(), tax: $("#Tax").val() },
             dataType: "json",
-            success: function (data) { 
-                $("#ExclAmount").val(data.data);
+            success: function (data) {
+                $("#ExclAmount").val(data.exclAmount);
+                $("#TaxAmount").val(data.taxAmount);
+                $("#InclAmount").val(data.inclAmount);
+
+                dynamicRowAddition();
             },
 
             failure: function (data) {
@@ -690,11 +729,25 @@
         });
     }
 
-    //function TaxAmount() {
-    //    $("#TaxAmount").val(parseFloat($("#Quantity").val()) * parseFloat($("#Price").val()));
-    //}
+    function calculateTotal() {
+        var table = $("table tbody");
+        var totalExclAmount = 0;
+        var totalTaxAmount = 0;
+        var totalInclAmount = 0;
 
-    //function InclAmount() {
-    //    $("#InclAmount").val(parseFloat($("#Quantity").val()) * parseFloat($("#Price").val()));
-    //}
+        var test = table.find('tr').each(function (i, el) {
+            var $tds = $(this).find('td'),
+                ExclAmount = $tds.eq(7).text(),
+                TaxAmount = $tds.eq(8).text(),
+                InclAmount = $tds.eq(9).text();
+            // do something with productId, product, Quantity
+            totalExclAmount = totalExclAmount + parseFloat(ExclAmount);
+            totalTaxAmount = totalTaxAmount + parseFloat(TaxAmount);
+            totalInclAmount = totalInclAmount + parseFloat(InclAmount);
+        });
+
+        $("#TotalExcl").text(totalExclAmount);
+        $("#TotalTax").text(totalTaxAmount);
+        $("#TotalIncl").text(totalInclAmount);
+    }
 </script>

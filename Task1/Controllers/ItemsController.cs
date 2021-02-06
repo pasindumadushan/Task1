@@ -27,14 +27,16 @@ namespace Task1.Controllers
             return Json(new { data = _context.Items.ToList() });
         }
 
-        [HttpGet("GetExclAmount")]
-        public ActionResult GetExclAmount(string price, string quantity)
+
+        [HttpGet("GetAmount")]
+        public ActionResult GetAmount(string price, string quantity, string tax)
         {
             var exclAmount = float.Parse(price) * float.Parse(quantity);
+            var taxAmount = exclAmount * float.Parse(tax) / 100;
+            var inclAmount = exclAmount + taxAmount;
 
-            return Json(new { data = exclAmount });
+            return Json(new { ExclAmount = exclAmount, TaxAmount = taxAmount, InclAmount = inclAmount });
         }
-
         // GET: api/Items/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
