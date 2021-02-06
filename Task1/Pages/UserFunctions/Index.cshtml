@@ -1,8 +1,8 @@
-﻿@page
+﻿
+@page
 @model Task1.Pages.UserFunctions.IndexModel
 @{
 }
-
 
 <head>
 
@@ -35,11 +35,17 @@
                                 <h1 class="h4 text-gray-900 mb-4">Sales Order!</h1>
                             </div>
                             <form id="Sales_Order_Form" novalidate>
-                                
+
                                 <div class="form-group row">
-                                    <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
+                                    <div class="col-sm-6">
+                                        <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <a class=" btn btn-primary btn-user btn-block" href="/UserFunctions/orderlist" role="button">Back to List </a>
+                                    </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
 
                                     <div class="col-sm-6">
@@ -139,7 +145,7 @@
                                         <input type="text" name="Tax" id="Tax" placeholder="Tax">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <div class="col-sm-2">
                                         <input type="hidden" name="ExclAmount" id="ExclAmount" placeholder="ExclAmount">
@@ -151,7 +157,7 @@
                                         <input type="hidden" name="InclAmount" id="InclAmount" placeholder="InclAmount">
                                     </div>
                                 </div>
-                               
+
                                 <input type="submit" class="btn btn-success" value="Add Row">
                             </form>
 
@@ -175,7 +181,8 @@
                                 <tfoot>
                                     <tr>
                                         <td></td>
-                                        <td><td>
+                                        <td>
+                                        <td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -789,3 +796,4 @@
         $("#TotalIncl").text(totalInclAmount);
     }
 </script>
+

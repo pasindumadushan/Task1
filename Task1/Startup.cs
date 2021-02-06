@@ -27,7 +27,7 @@ namespace Task1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SalesOrderContext>(option => option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllersWithViews();
+            services.AddControllers();
             services.AddRazorPages().AddRazorRuntimeCompilation();
         }
 

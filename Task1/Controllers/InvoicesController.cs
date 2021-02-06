@@ -82,5 +82,12 @@ namespace Task1.Controllers
 
             return Json("test");
         }
+
+        [HttpGet("GetInvoices")]
+        public ActionResult GetInvoices()
+        {
+            return Json(new { data = _context.Invoice.ToList() });
+        }
     }
+
 }
