@@ -25,7 +25,7 @@ namespace Task1.Controllers
         public ActionResult GetCustomers()
         {
             //.Select(x=>x.CustomerName)
-            return Json(new { data = _context.Customers.ToList() });
+            return Json(new { data = _context.Customer.ToList() });
         }
 
         // GET: Customers/Details/5
@@ -36,7 +36,7 @@ namespace Task1.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
+            var customer = await _context.Customer
                 .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
@@ -76,7 +76,7 @@ namespace Task1.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customer.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -127,7 +127,7 @@ namespace Task1.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
+            var customer = await _context.Customer
                 .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
@@ -142,15 +142,15 @@ namespace Task1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            _context.Customers.Remove(customer);
+            var customer = await _context.Customer.FindAsync(id);
+            _context.Customer.Remove(customer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-            return _context.Customers.Any(e => e.CustomerId == id);
+            return _context.Customer.Any(e => e.CustomerId == id);
         }
     }
 }

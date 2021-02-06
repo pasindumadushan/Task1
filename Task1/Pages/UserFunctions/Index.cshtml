@@ -221,7 +221,7 @@
         AutoFillItemData(this.value);
     });
 
-    
+
 
     function validateInvoiceData() {
         $(function () {
@@ -474,6 +474,9 @@
             formData.append('Suburb', $('#Suburb').val());
             formData.append('State', $('#State').val());
             formData.append('PostCode', $('#PostCode').val());
+            formData.append('TotalExcl', $("#TotalExcl").text());
+            formData.append('TotalTax', $('#TotalTax').text());
+            formData.append('TotalIncl', $('#TotalIncl').text());
 
             $.ajax({
                 type: "POST",
@@ -494,7 +497,7 @@
                 error: function (data) {
                     console.log("error");
                 }
-                 
+
             });
         });
     }
@@ -646,7 +649,7 @@
     }
 
     function dynamicRowAddition() {
-        $(function () { 
+        $(function () {
 
             var ItemCode = $("#ItemCode").val();
             var Description = $("#Description").val();
@@ -675,7 +678,7 @@
 
         });
 
-        
+
 
     }
 
@@ -695,7 +698,42 @@
                 ExclAmount = $tds.eq(7).text(),
                 TaxAmount = $tds.eq(8).text(),
                 InclAmount = $tds.eq(9).text();
-            // do something with productId, product, Quantity
+                // do something with productId, product, Quantity
+
+            var formData = new FormData();
+            formData.append('InvoiceNo', $('#InvoiceNo').val());
+            formData.append('ItemCode', ItemCode);
+            formData.append('Description', Description);
+            formData.append('Note2', Note2);
+            formData.append('Quantity', Quantity);
+            formData.append('Price', Price);
+            formData.append('Tax', Tax);
+            formData.append('ExclAmount', ExclAmount);
+            formData.append('TaxAmount', TaxAmount);
+            formData.append('InclAmount', InclAmount);
+
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: '@Url.Action("PostItems", "InvoiceItems")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                //cache: false,
+                success: function (data) {
+
+                },
+
+                failure: function (data) {
+                    console.log("failure");
+                },
+                error: function (data) {
+                    console.log("error");
+                }
+
+            });
+
 
             alert('Row ' + (i + 1) + ':\nId: ' + ItemCode + '\nProduct: ' + Description + '\nQuantity: ' + Note2 + '\nProduct: ' + Quantity + '\nQuantity: ' + Price + '\nProduct: ' + Tax + '\nQuantity: ' + ExclAmount + '\nProduct: ' + TaxAmount + '\nQuantity: ' + InclAmount);
 

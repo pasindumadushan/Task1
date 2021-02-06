@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-#nullable disable
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Task1.Models
 {
@@ -17,28 +19,24 @@ namespace Task1.Models
         {
         }
 
-        public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<Invoice> Invoices { get; set; }
-        public virtual DbSet<InvoiceItem> InvoiceItems { get; set; }
-        public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<Customer> Customer { get; set; }
+        public virtual DbSet<Invoice> Invoice { get; set; }
+        public virtual DbSet<InvoiceItem> InvoiceItem { get; set; }
+        public virtual DbSet<Item> Item { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=SalesOrder;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SalesOrder;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
-
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.ToTable("Customer");
-
                 entity.Property(e => e.Address1)
                     .IsRequired()
                     .HasMaxLength(200);
@@ -62,9 +60,7 @@ namespace Task1.Models
             {
                 entity.HasKey(e => e.InvoiceNo);
 
-                entity.ToTable("Invoice");
-
-                entity.Property(e => e.InvoiceDate).HasColumnType("datetime");
+                entity.Property(e => e.InvoiceDate).HasColumnType("smalldatetime");
 
                 entity.Property(e => e.Note).HasMaxLength(50);
 
@@ -73,21 +69,13 @@ namespace Task1.Models
                 entity.Property(e => e.TotalIncl).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.TotalTax).HasColumnType("numeric(18, 2)");
-
-                entity.HasOne(d => d.CustomerRef)
-                    .WithMany(p => p.Invoices)
-                    .HasForeignKey(d => d.CustomerRefId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CustomerRefId_CustomerId");
             });
 
             modelBuilder.Entity<InvoiceItem>(entity =>
             {
                 entity.HasKey(e => e.OrderItemId);
 
-                entity.ToTable("InvoiceItem");
-
-                entity.Property(e => e.OrderItemId).ValueGeneratedNever();
+                entity.Property(e => e.Description).HasMaxLength(200);
 
                 entity.Property(e => e.ExclAmount).HasColumnType("numeric(18, 2)");
 
@@ -95,16 +83,20 @@ namespace Task1.Models
 
                 entity.Property(e => e.Note).HasMaxLength(50);
 
+                entity.Property(e => e.Price).HasColumnType("numeric(18, 2)");
+
                 entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
 
+                entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 2)");
+
                 entity.HasOne(d => d.InvoiceRefNoNavigation)
-                    .WithMany(p => p.InvoiceItems)
+                    .WithMany(p => p.InvoiceItem)
                     .HasForeignKey(d => d.InvoiceRefNo)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InvoiceRefNo_InvoiceNo");
 
                 entity.HasOne(d => d.ItemRefCodeNavigation)
-                    .WithMany(p => p.InvoiceItems)
+                    .WithMany(p => p.InvoiceItem)
                     .HasForeignKey(d => d.ItemRefCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ItemRefCode_ItemCode");
@@ -113,8 +105,6 @@ namespace Task1.Models
             modelBuilder.Entity<Item>(entity =>
             {
                 entity.HasKey(e => e.ItemCode);
-
-                entity.ToTable("Item");
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 

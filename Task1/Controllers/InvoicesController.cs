@@ -51,7 +51,7 @@ namespace Task1.Controllers
             objCustomer.State = Request.Form["State"];
             objCustomer.PostalCode = Request.Form["PostCode"];
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerName == objCustomer.CustomerName);
+            var customer = await _context.Customer.FirstOrDefaultAsync(m => m.CustomerName == objCustomer.CustomerName);
 
             if (customer.CustomerId == 0)
             {
@@ -63,11 +63,14 @@ namespace Task1.Controllers
                 //await _context.SaveChangesAsync();
             }
 
-            objInvoice.CustomerRefId = customer.CustomerId;
             objInvoice.InvoiceNo = Int32.Parse(Request.Form["InvoiceNo"]);
+            objInvoice.CustomerRefId = customer.CustomerId;
             objInvoice.InvoiceDate = DateTime.Parse(Request.Form["InvoiceDate"]);
             objInvoice.ReferenceNo = Int32.Parse(Request.Form["ReferenceNo"]);
             objInvoice.Note = Request.Form["Note"];
+            objInvoice.TotalExcl = decimal.Parse(Request.Form["TotalExcl"]);
+            objInvoice.TotalTax = decimal.Parse(Request.Form["TotalTax"]);
+            objInvoice.TotalIncl = decimal.Parse(Request.Form["TotalIncl"]);
 
             if (objInvoice.InvoiceNo == 0)
             {
@@ -76,18 +79,6 @@ namespace Task1.Controllers
 
             _context.Update(objInvoice);
             await _context.SaveChangesAsync();
-
-            
-            System.Diagnostics.Debug.WriteLine(objCustomer.CustomerName);
-            System.Diagnostics.Debug.WriteLine(objCustomer.Address1);
-            System.Diagnostics.Debug.WriteLine(objCustomer.Address2);
-            System.Diagnostics.Debug.WriteLine(objCustomer.Address3);
-            System.Diagnostics.Debug.WriteLine(objCustomer.Suburb);
-            System.Diagnostics.Debug.WriteLine(objCustomer.State);
-            System.Diagnostics.Debug.WriteLine(objCustomer.PostalCode);
-            System.Diagnostics.Debug.WriteLine(objInvoice.InvoiceNo);
-            System.Diagnostics.Debug.WriteLine(objInvoice.InvoiceDate);
-            System.Diagnostics.Debug.WriteLine(objInvoice.ReferenceNo);
 
             return Json("test");
         }

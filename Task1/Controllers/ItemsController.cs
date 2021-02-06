@@ -14,7 +14,7 @@ namespace Task1.Controllers
     public class ItemsController : Controller
     {
         private readonly SalesOrderContext _context;
-
+        InvoiceItem objInvoiceItem;
         public ItemsController(SalesOrderContext context)
         {
             _context = context;
@@ -24,7 +24,7 @@ namespace Task1.Controllers
         [HttpGet]
         public ActionResult GetItems()
         {
-            return Json(new { data = _context.Items.ToList() });
+            return Json(new { data = _context.Item.ToList() });
         }
 
 
@@ -37,11 +37,12 @@ namespace Task1.Controllers
 
             return Json(new { ExclAmount = exclAmount, TaxAmount = taxAmount, InclAmount = inclAmount });
         }
+
         // GET: api/Items/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
-            var item = await _context.Items.FindAsync(id);
+            var item = await _context.Item.FindAsync(id);
 
             if (item == null)
             {
@@ -83,29 +84,18 @@ namespace Task1.Controllers
             return NoContent();
         }
 
-        // POST: api/Items
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
-        {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetItem", new { id = item.ItemCode }, item);
-        }
-
+        
         // DELETE: api/Items/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Item>> DeleteItem(int id)
         {
-            var item = await _context.Items.FindAsync(id);
+            var item = await _context.Item.FindAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
 
-            _context.Items.Remove(item);
+            _context.Item.Remove(item);
             await _context.SaveChangesAsync();
 
             return item;
@@ -113,7 +103,7 @@ namespace Task1.Controllers
 
         private bool ItemExists(int id)
         {
-            return _context.Items.Any(e => e.ItemCode == id);
+            return _context.Item.Any(e => e.ItemCode == id);
         }
     }
 }

@@ -11,27 +11,50 @@ namespace Task1.Controllers
 {
     [Route("api/InvoiceItems")]
     [ApiController]
-    public class InvoiceItemsController : ControllerBase
+    public class InvoiceItemsController : Controller
     {
         private readonly SalesOrderContext _context;
+        InvoiceItem objInvoiceItem;
 
         public InvoiceItemsController(SalesOrderContext context)
         {
             _context = context;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> PostItems()
+        {
+            objInvoiceItem = new InvoiceItem();
+
+            objInvoiceItem.InvoiceRefNo = Int32.Parse(Request.Form["InvoiceNo"]);
+            objInvoiceItem.ItemRefCode = Int32.Parse(Request.Form["ItemCode"]);
+            objInvoiceItem.Description = Request.Form["Description"];
+            objInvoiceItem.Note = Request.Form["Note2"];
+            objInvoiceItem.Quantity = Int32.Parse(Request.Form["Quantity"]);
+            objInvoiceItem.Price = decimal.Parse(Request.Form["Price"]);
+            objInvoiceItem.Tax = decimal.Parse(Request.Form["Tax"]);
+            objInvoiceItem.ExclAmount = decimal.Parse(Request.Form["ExclAmount"]);
+            objInvoiceItem.TaxAmount = decimal.Parse(Request.Form["TaxAmount"]);
+            objInvoiceItem.InclAmount = decimal.Parse(Request.Form["InclAmount"]);
+
+            _context.Add(objInvoiceItem);
+            await _context.SaveChangesAsync();
+
+            return Json(new { data = "test" });
+        }
+
         // GET: api/InvoiceItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InvoiceItem>>> GetInvoiceItems()
         {
-            return await _context.InvoiceItems.ToListAsync();
+            return await _context.InvoiceItem.ToListAsync();
         }
 
         // GET: api/InvoiceItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<InvoiceItem>> GetInvoiceItem(int id)
         {
-            var invoiceItem = await _context.InvoiceItems.FindAsync(id);
+            var invoiceItem = await _context.InvoiceItem.FindAsync(id);
 
             if (invoiceItem == null)
             {
@@ -76,40 +99,19 @@ namespace Task1.Controllers
         // POST: api/InvoiceItems
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<InvoiceItem>> PostInvoiceItem(InvoiceItem invoiceItem)
-        {
-            _context.InvoiceItems.Add(invoiceItem);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (InvoiceItemExists(invoiceItem.OrderItemId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetInvoiceItem", new { id = invoiceItem.OrderItemId }, invoiceItem);
-        }
+        
 
         // DELETE: api/InvoiceItems/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<InvoiceItem>> DeleteInvoiceItem(int id)
         {
-            var invoiceItem = await _context.InvoiceItems.FindAsync(id);
+            var invoiceItem = await _context.InvoiceItem.FindAsync(id);
             if (invoiceItem == null)
             {
                 return NotFound();
             }
 
-            _context.InvoiceItems.Remove(invoiceItem);
+            _context.InvoiceItem.Remove(invoiceItem);
             await _context.SaveChangesAsync();
 
             return invoiceItem;
@@ -117,7 +119,7 @@ namespace Task1.Controllers
 
         private bool InvoiceItemExists(int id)
         {
-            return _context.InvoiceItems.Any(e => e.OrderItemId == id);
+            return _context.InvoiceItem.Any(e => e.OrderItemId == id);
         }
     }
 }

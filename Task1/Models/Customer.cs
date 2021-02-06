@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Task1.Models
 {
     public partial class Customer
     {
-        public Customer()
-        {
-            Invoices = new HashSet<Invoice>();
-        }
-
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string Address1 { get; set; }
@@ -20,7 +17,5 @@ namespace Task1.Models
         public string Suburb { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
-
-        public virtual ICollection<Invoice> Invoices { get; set; }
     }
 }
