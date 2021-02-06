@@ -36,6 +36,9 @@
                             </div>
                             <form id="Sales_Order_Form" novalidate>
                                 <div class="form-group row">
+
+                                    <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
+
                                     <div class="col-sm-6">
                                         <select id="Customers" name="Customers">
                                         </select>
@@ -109,46 +112,42 @@
 
                                 </div>
 
-                                <select id="ItemCode" name="ItemCode">
-                                </select>
-                                <input type="text" id="Description" placeholder="Description">
-                                <input type="text" id="Note2" placeholder="Note">
-                                <input type="text" id="Quantity" placeholder="Quantity">
-                                <input type="text" id="Price" placeholder="Price">
-                                <input type="text" id="Tax" placeholder="Tax">
-                                <input type="text" id="ExclAmount" placeholder="ExclAmount">
-                                <input type="text" id="TaxAmount" placeholder="TaxAmount">
-                                <input type="text" id="InclAmount" placeholder="InclAmount">
-
-                                <input type="button" class="add-row" value="Add Row">
-
-
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Select</th>
-                                            <th>ItemCode</th>
-                                            <th>Description</th>
-                                            <th>Note</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                            <th>Tax</th>
-                                            <th>ExclAmount</th>
-                                            <th>TaxAmount</th>
-                                            <th>InclAmount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                                <button type="button" class="delete-row">Delete Row</button>
-
-                                <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
-
                             </form>
 
-                            
-                                
+                            <form id="Items_Form" novalidate>
+                                <select id="ItemCode" name="ItemCode">
+                                </select>
+                                <input type="text" name="Description" id="Description" placeholder="Description">
+                                <input type="text" name="Note2" id="Note2" placeholder="Note">
+                                <input type="text" name="Quantity" id="Quantity" placeholder="Quantity">
+                                <input type="text" name="Price" id="Price" placeholder="Price">
+                                <input type="text" name="Tax" id="Tax" placeholder="Tax">
+                                <input type="text" name="ExclAmount" id="ExclAmount" placeholder="ExclAmount">
+                                <input type="text" name="TaxAmount" id="TaxAmount" placeholder="TaxAmount">
+                                <input type="text" name="InclAmount" id="InclAmount" placeholder="InclAmount">
+
+                                <input type="submit" class="add-row" value="Add Row">
+                            </form>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>ItemCode</th>
+                                        <th>Description</th>
+                                        <th>Note</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Tax</th>
+                                        <th>ExclAmount</th>
+                                        <th>TaxAmount</th>
+                                        <th>InclAmount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <button type="button" class="delete-row">Delete Row</button>
 
                         </div>
                     </div>
@@ -167,10 +166,36 @@
 <script>
     $(document).ready(function () {
 
+        validateInvoiceData();
+        validateItemsData();
         getCustomerData();
         getInvoiceData();
         getItemDate();
-        dynamicRowAddition();
+        calculateAmounts();
+
+    });
+
+    $("#Customers").change(function () {
+        AutoFillCustomerData(this.value);
+    });
+
+    $("#ItemCode").change(function () {
+        AutoFillItemData(this.value);
+    });
+
+    $("#Quantity").change(function () {
+        ExclAmount();
+    });
+
+    //$("#Tax").change(function () {
+    //    TaxAmount();
+    //});
+
+    //$("#TaxAmount").change(function () {
+    //    InclAmount();
+    //});
+
+    function validateInvoiceData() {
         $(function () {
 
             jQuery.validator.addMethod("noSpace", function (value, element) {
@@ -288,25 +313,126 @@
                 },
 
                 submitHandler: function (form) {
-                    //postData();
+                    postInvoiceData();
                     submitTableData();
                 }
 
             });
         });
+    }
 
-    });
+    function validateItemsData() {
+        $(function () {
 
-    $("#Customers").change(function () {
-        AutoFillCustomerData(this.value);
-    });
+            jQuery.validator.addMethod("noSpace", function (value, element) {
+                return value.indexOf(" ") < 0 && value != "";
+            }, "No space please and don't leave it empty");
 
-    $("#ItemCode").change(function () {
-        AutoFillItemData(this.value);
-    });
+            jQuery.validator.addMethod("exactlength", function (value, element, param) {
+                return this.optional(element) || value.length == param;
+            }, $.validator.format("Please enter exactly {0} characters."));
 
-    function postData() {
-        $('#Sales_Order_Form').submit(function (e) {
+            $("#Items_Form").validate({
+                errorPlacement: function (error, element) {
+                    var placement = $(element).data('error');
+                    if (placement) {
+                        $(placement).append(error)
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    ItemCode: {
+                        required: true
+                    },
+                    Description: {
+                        required: true,
+                        maxlength: 50
+                    },
+                    Note2: {
+                        maxlength: 200
+                    },
+                    Quantity: {
+                        required: true,
+                        number: true
+                    },
+                    Price: {
+                        required: true,
+                        number: true
+                    },
+                    Tax: {
+                        required: true,
+                        number: true
+                    }
+                    //,
+                    //ExclAmount: {
+                    //    required: true,
+                    //    number: true
+                    //},
+                    //TaxAmount: {
+                    //    required: true,
+                    //    number: true
+                    //},
+                    //InclAmount: {
+                    //    required: true,
+                    //    number: true
+                    //}
+
+                },
+
+                messages: {
+                    Customers: {
+                        required: "Please provide this field !",
+                        noSpace: "Please dont use spaces !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    ItemCode: {
+                        required: "Please provide this field !"
+                    },
+                    Description: {
+                        required: "Please provide this field !",
+                        maxlength: "Maximum length execced !"
+                    },
+                    Note2: {
+                        maxlength: "Maximum length execced !"
+                    },
+                    Quantity: {
+                        required: "Please provide this field !",
+                        number: "Please use only numbers"
+                    },
+                    Price: {
+                        required: "Please provide this field !",
+                        number: "Please use only numbers"
+                    },
+                    Tax: {
+                        required: "Please provide this field !",
+                        number: "Please use only numbers"
+                    }
+                    //,
+                    //ExclAmount: {
+                    //    required: "Please provide this field !",
+                    //    number: "Please use only numbers"
+                    //},
+                    //TaxAmount: {
+                    //    required: "Please provide this field !",
+                    //    number: "Please use only numbers"
+                    //},
+                    //InclAmount: {
+                    //    required: "Please provide this field !",
+                    //    number: "Please use only numbers"
+                    //}
+                },
+
+                submitHandler: function (form) {
+                    dynamicRowAddition();
+                }
+
+            });
+        });
+    }
+
+    function postInvoiceData() {
+        $(function () {
 
             var formData = new FormData();
             formData.append('Customers', $('#Customers').val());
@@ -476,7 +602,8 @@
                 for (i = 0; i < newData.length; i++) {
                     if (newData[i].itemCode == ItemCode) {
                         $("#Description").val(newData[i].description);
-                        $("#Price").val(newData[i].price);
+                        $("#Price").val(newData[i].price
+                        );
                     }
                 }
             },
@@ -492,7 +619,8 @@
     }
 
     function dynamicRowAddition() {
-        $(".add-row").click(function () {
+        $(function () { 
+
             var ItemCode = $("#ItemCode").val();
             var Description = $("#Description").val();
             var Note2 = $("#Note2").val();
@@ -502,7 +630,6 @@
             var ExclAmount = $("#ExclAmount").val();
             var TaxAmount = $("#TaxAmount").val();
             var InclAmount = $("#InclAmount").val();
-            alert(Note);
             var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + ItemCode + "</td><td>" + Description + "</td><td>" + Note2 + "</td><td>" + Quantity + "</td><td>" + Price + "</td><td>" + Tax + "</td><td>" + ExclAmount + "</td><td>" + TaxAmount + "</td><td>" + InclAmount + "</td></tr>";
             $("table tbody").append(markup);
         });
@@ -541,4 +668,33 @@
 
         console.log(table);
     }
+
+    function ExclAmount() {
+        $.ajax({
+            type: "GET",
+            url: "/api/Items/GetExclAmount",
+            data: { price: $("#Quantity").val(), quantity: $("#Price").val()},
+            dataType: "json",
+            success: function (data) { 
+                $("#ExclAmount").val(data.data);
+            },
+
+            failure: function (data) {
+                console.log("failure");
+            },
+
+            error: function (data) {
+                console.log("error");
+            }
+
+        });
+    }
+
+    //function TaxAmount() {
+    //    $("#TaxAmount").val(parseFloat($("#Quantity").val()) * parseFloat($("#Price").val()));
+    //}
+
+    //function InclAmount() {
+    //    $("#InclAmount").val(parseFloat($("#Quantity").val()) * parseFloat($("#Price").val()));
+    //}
 </script>
