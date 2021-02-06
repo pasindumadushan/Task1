@@ -53,6 +53,16 @@ namespace Task1.Controllers
 
             var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerName == objCustomer.CustomerName);
 
+            if (customer.CustomerId == 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //_context.Update(objCustomer);
+                //await _context.SaveChangesAsync();
+            }
+
             objInvoice.CustomerRefId = customer.CustomerId;
             objInvoice.InvoiceNo = Int32.Parse(Request.Form["InvoiceNo"]);
             objInvoice.InvoiceDate = DateTime.Parse(Request.Form["InvoiceDate"]);

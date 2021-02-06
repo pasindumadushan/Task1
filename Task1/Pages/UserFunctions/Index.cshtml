@@ -108,10 +108,47 @@
                                     </div>
 
                                 </div>
-                                <div class="mypanel"></div>
+
+                                <select id="ItemCode" name="ItemCode">
+                                </select>
+                                <input type="text" id="Description" placeholder="Description">
+                                <input type="text" id="Note2" placeholder="Note">
+                                <input type="text" id="Quantity" placeholder="Quantity">
+                                <input type="text" id="Price" placeholder="Price">
+                                <input type="text" id="Tax" placeholder="Tax">
+                                <input type="text" id="ExclAmount" placeholder="ExclAmount">
+                                <input type="text" id="TaxAmount" placeholder="TaxAmount">
+                                <input type="text" id="InclAmount" placeholder="InclAmount">
+
+                                <input type="button" class="add-row" value="Add Row">
+
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Select</th>
+                                            <th>ItemCode</th>
+                                            <th>Description</th>
+                                            <th>Note</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Tax</th>
+                                            <th>ExclAmount</th>
+                                            <th>TaxAmount</th>
+                                            <th>InclAmount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <button type="button" class="delete-row">Delete Row</button>
+
                                 <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
 
                             </form>
+
+                            
+                                
 
                         </div>
                     </div>
@@ -132,6 +169,8 @@
 
         getCustomerData();
         getInvoiceData();
+        getItemDate();
+        dynamicRowAddition();
         $(function () {
 
             jQuery.validator.addMethod("noSpace", function (value, element) {
@@ -249,7 +288,8 @@
                 },
 
                 submitHandler: function (form) {
-                    postData();
+                    //postData();
+                    submitTableData();
                 }
 
             });
@@ -259,9 +299,11 @@
 
     $("#Customers").change(function () {
         AutoFillCustomerData(this.value);
-        alert(this.value);
     });
-        
+
+    $("#ItemCode").change(function () {
+        AutoFillItemData(this.value);
+    });
 
     function postData() {
         $('#Sales_Order_Form').submit(function (e) {
@@ -389,5 +431,114 @@
             }
 
         });
+    }
+
+    function getItemDate() {
+
+        $.ajax({
+            type: "GET",
+            url: "/api/Items",
+            dataType: "json",
+            success: function (data) {
+                var itemsData = data;
+                var newData = itemsData.data;
+
+                $('#ItemCode').empty();
+                $('#ItemCode').append('<option selected="true" disabled>Choose Item Code...</option>');
+                $('#ItemCode').prop('selectedIndex', 0);
+
+                for (i = 0; i < newData.length; i++) {
+                    $('#ItemCode').append($('<option></option>').attr('value', newData[i].itemCode).text(newData[i].itemCode))
+                }
+            },
+
+            failure: function (data) {
+                console.log("failure");
+            },
+
+            error: function (data) {
+                console.log("error");
+            }
+
+        });
+    }
+
+    function AutoFillItemData(ItemCode) {
+
+        $.ajax({
+            type: "GET",
+            url: "/api/Items",
+            dataType: "json",
+            success: function (data) {
+                var ItemsData = data;
+                var newData = ItemsData.data;
+
+                for (i = 0; i < newData.length; i++) {
+                    if (newData[i].itemCode == ItemCode) {
+                        $("#Description").val(newData[i].description);
+                        $("#Price").val(newData[i].price);
+                    }
+                }
+            },
+
+            failure: function (data) {
+                console.log("failure");
+            },
+            error: function (data) {
+                console.log("error");
+            }
+
+        });
+    }
+
+    function dynamicRowAddition() {
+        $(".add-row").click(function () {
+            var ItemCode = $("#ItemCode").val();
+            var Description = $("#Description").val();
+            var Note2 = $("#Note2").val();
+            var Quantity = $("#Quantity").val();
+            var Price = $("#Price").val();
+            var Tax = $("#Tax").val();
+            var ExclAmount = $("#ExclAmount").val();
+            var TaxAmount = $("#TaxAmount").val();
+            var InclAmount = $("#InclAmount").val();
+            alert(Note);
+            var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + ItemCode + "</td><td>" + Description + "</td><td>" + Note2 + "</td><td>" + Quantity + "</td><td>" + Price + "</td><td>" + Tax + "</td><td>" + ExclAmount + "</td><td>" + TaxAmount + "</td><td>" + InclAmount + "</td></tr>";
+            $("table tbody").append(markup);
+        });
+
+        // Find and remove selected table rows
+        $(".delete-row").click(function () {
+            $("table tbody").find('input[name="record"]').each(function () {
+                if ($(this).is(":checked")) {
+                    $(this).parents("tr").remove();
+                }
+            });
+        });
+    }
+
+    function submitTableData() {
+
+        var table = $("table tbody");
+
+        var test = table.find('tr').each(function (i, el) {
+            var $tds = $(this).find('td'),
+                CheckBox = $tds.eq(0).text(),
+                ItemCode = $tds.eq(1).text(),
+                Description = $tds.eq(2).text(),
+                Note2 = $tds.eq(3).text(),
+                Quantity = $tds.eq(4).text(),
+                Price = $tds.eq(5).text(),
+                Tax = $tds.eq(6).text(),
+                ExclAmount = $tds.eq(7).text(),
+                TaxAmount = $tds.eq(8).text(),
+                InclAmount = $tds.eq(9).text();
+            // do something with productId, product, Quantity
+
+            alert('Row ' + (i + 1) + ':\nId: ' + ItemCode + '\nProduct: ' + Description + '\nQuantity: ' + Note2 + '\nProduct: ' + Quantity + '\nQuantity: ' + Price + '\nProduct: ' + Tax + '\nQuantity: ' + ExclAmount + '\nProduct: ' + TaxAmount + '\nQuantity: ' + InclAmount);
+
+        });
+
+        console.log(table);
     }
 </script>
