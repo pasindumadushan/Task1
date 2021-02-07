@@ -89,6 +89,20 @@ namespace Task1.Controllers
         {
             return Json(new { data = _context.Invoice.ToList() });
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteInvoice(int id)
+        {
+            var item = await _context.Invoice.FirstOrDefaultAsync(u => u.InvoiceNo == id);
+            if (item == null)
+            {
+                return Json(new { data = "Fail" });
+            }
+            _context.Invoice.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return Json(new { data = "success" }); 
+        }
     }
 
 }

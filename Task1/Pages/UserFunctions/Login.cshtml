@@ -154,6 +154,7 @@
                     location.replace("/UserFunctions/OrderList");
 
                 }).fail(function (xhdr, statusText, errorText) {
+                    alert("Wrong user name and password!");
                     localStorage.setItem('Id_token', errorText);
             });  
         }

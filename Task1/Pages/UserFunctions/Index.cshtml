@@ -42,7 +42,7 @@
                                     </div>
 
                                     <div class="col-sm-2">
-                                        <a class=" btn btn-primary btn-user btn-block" href="/UserFunctions/orderlist" role="button">Back to List </a>
+                                        <input type="button" class=" btn btn-primary btn-user btn-block" role="button" id="BackToList" value="Back to List">
                                     </div>
                                 </div>
 
@@ -235,7 +235,10 @@
         AutoFillItemData(this.value);
     });
 
-
+    $("#BackToList").click(function () {
+        DeleteInvoiceData();
+    });
+    
 
     function validateInvoiceData() {
         $(function () {
@@ -357,6 +360,7 @@
                 submitHandler: function (form) {
                     postInvoiceData();
                     submitTableData();
+                    window.location.replace("/UserFunctions/OrderList");
                 }
 
             });
@@ -800,6 +804,26 @@
         $("#TotalExcl").text(totalExclAmount);
         $("#TotalTax").text(totalTaxAmount);
         $("#TotalIncl").text(totalInclAmount);
+    }
+
+    function DeleteInvoiceData() {
+        $.ajax({
+            type: "DELETE",
+            url: "/api/Invoices?id=" + $("#InvoiceNo").val(),
+            dataType: "json",
+            success: function (data) {
+                location.replace("/UserFunctions/orderlist");
+            },
+
+            failure: function (data) {
+                location.replace("/UserFunctions/orderlist");
+            },
+
+            error: function (data) {
+                location.replace("/UserFunctions/orderlist");
+            }
+
+        });
     }
 </script>
 

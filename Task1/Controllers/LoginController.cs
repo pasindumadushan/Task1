@@ -16,7 +16,7 @@ namespace Task1.Controllers
         [HttpGet]
         public IActionResult Create(string UserName, string Password)
         {
-            if (UserName != "test" && Password != "123")
+            if (UserName != "test" || Password != "123")
                 return Unauthorized();
 
             var token = new JwtTokenBuilder()
