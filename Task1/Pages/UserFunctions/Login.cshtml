@@ -149,7 +149,7 @@
                 },
                 ContentType: "application/json"
                 }).done(function (data, statusText, xhdr) {
-
+                    alert(data);
                     localStorage.setItem('Id_token', data);
                     location.replace("/UserFunctions/OrderList");
 
