@@ -37,11 +37,11 @@
                             <form id="Sales_Order_Form" novalidate>
 
                                 <div class="form-group row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-2">
                                         <input type="submit" value="Save Order" class="btn btn-primary btn-user btn-block" />
                                     </div>
 
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-2">
                                         <a class=" btn btn-primary btn-user btn-block" href="/UserFunctions/orderlist" role="button">Back to List </a>
                                     </div>
                                 </div>
@@ -126,6 +126,16 @@
                             <form id="Items_Form" novalidate>
                                 <div class="form-group row">
                                     <div class="col-sm-2">
+                                        <input type="submit" class="btn btn-success btn-block" value="Add Row">
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-danger btn-block">Delete Row</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
                                         <select id="ItemCode" name="ItemCode">
                                         </select>
                                     </div>
@@ -157,10 +167,9 @@
                                         <input type="hidden" name="InclAmount" id="InclAmount" placeholder="InclAmount">
                                     </div>
                                 </div>
-
-                                <input type="submit" class="btn btn-success" value="Add Row">
                             </form>
 
+                            
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -193,8 +202,6 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            <button type="button" class="btn btn-danger">Delete Row</button>
-
                         </div>
                     </div>
                 </div>
@@ -741,8 +748,7 @@
 
             });
 
-
-            alert('Row ' + (i + 1) + ':\nId: ' + ItemCode + '\nProduct: ' + Description + '\nQuantity: ' + Note2 + '\nProduct: ' + Quantity + '\nQuantity: ' + Price + '\nProduct: ' + Tax + '\nQuantity: ' + ExclAmount + '\nProduct: ' + TaxAmount + '\nQuantity: ' + InclAmount);
+            //('Row ' + (i + 1) + ':\nId: ' + ItemCode + '\test: ' + Description + '\test: ' + Note2 + '\test: ' + Quantity + '\test: ' + Price + '\test: ' + Tax + '\test: ' + ExclAmount + '\test: ' + TaxAmount + '\test: ' + InclAmount);
 
         });
 
